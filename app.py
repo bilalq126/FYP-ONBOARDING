@@ -93,12 +93,35 @@ elif st.session_state.step == 3:
     q_index = st.session_state.current_question
     total = len(st.session_state.questions)
 
+    # Hide language/level selectors by not rendering them in this step
+
+    card_css = """
+    <style>
+    .question-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        padding: 2rem 1.5rem 1.5rem 1.5rem;
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .question-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    </style>
+    """
+    st.markdown(card_css, unsafe_allow_html=True)
+
     if q_index < total:
         q = st.session_state.questions[q_index]
-        st.subheader(f"🧠 Question {q_index + 1} of {total}")
-        st.markdown(f"**{q['question']}**")
+        st.markdown(f'<div class="question-card">', unsafe_allow_html=True)
+        st.markdown(f'<div class="question-title">🧠 Question {q_index + 1} of {total}</div>', unsafe_allow_html=True)
+        st.markdown(f"<b>{q['question']}</b>", unsafe_allow_html=True)
         selected = st.radio("Choose your answer:", q["options"], key=f"q{q_index}")
-
         if st.button("Next Question"):
             st.session_state.answers.append(selected)
             # Evaluate answer
@@ -108,6 +131,7 @@ elif st.session_state.step == 3:
                 st.session_state.score += 1
             st.session_state.current_question += 1
             st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.session_state.step = 4
         st.rerun()
